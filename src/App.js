@@ -84,7 +84,7 @@ function Navbar() {
           {/* Logo */}
           <div className="logo logo-animated">
             <span className="logo-sparkle">💸</span>
-            <span className="logo-text logo-gradient">coinzo</span>
+            <span className="logo-text logo-gradient">COINZO</span>
           </div>
 
           {/* Desktop Menu */}
@@ -227,7 +227,7 @@ function About() {
       <motion.div className="section-header" initial="hidden" whileInView="visible"
         viewport={{ once: true, amount: 0.4 }} variants={sectionFadeIn} custom={0}>
         <span className="section-icon">💡</span>
-        <h2>About coinzo</h2>
+        <h2>About COINZO</h2>
       </motion.div>
       <motion.div className="cool-card about-card-glass"
         initial="hidden" whileInView="visible"
@@ -264,7 +264,7 @@ function Footer() {
           <a href="https://in.pinterest.com/lvcooking/"><FaPinterest /></a>
         </div>
         <div className="footer-link-row">
-          <span>© {new Date().getFullYear()} coinzo. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} COINZO. All rights reserved.</span>
         </div>
         <div className="footer-credit">
           <span>Made by <strong>Lakshit Verma</strong></span>
