@@ -9,6 +9,7 @@
   --primary: #3b82f6;      /* soft blue */
   --secondary: #8b5cf6;    /* violet */
   --accent: #22c55e;       /* green */
+  --purple: #b27cff;
 
   /* 📝 Text */
   --text: #0f172a;
@@ -27,6 +28,10 @@
 
 
 /* --- Global styles --- */
+html {
+  scroll-behavior: smooth;
+}
+
 html, body {
   background: radial-gradient(
       circle at top left,
@@ -159,7 +164,13 @@ body {
 .nav-signup { color:#fff; background:linear-gradient(90deg, var(--primary) 0%, var(--purple) 100%); box-shadow:0 2px 12px 0 var(--glow);}
 .nav-signup:hover { background:linear-gradient(90deg, var(--purple) 0%, var(--primary) 100%); filter:brightness(1.1);}
 .nav-signin { background:none; border:2px solid var(--primary); color:var(--primary);}
-.nav-signin:hover { background:#21262db0; color:var(--primary); box-shadow:0 2px 12px var(--primary);}
+.nav-signin:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 4px 18px rgba(59, 130, 246, 0.35);
+  transform: translateY(-2px);
+}
 .hero-section.hero-no-card { display:flex; flex-direction:column; align-items:center; justify-content:flex-start; min-height:64vh; position:relative;}
 .hero-content { 
   margin-top:7vw; 
@@ -514,12 +525,15 @@ body {
 
 /* Scrollbar and selection */
 ::-webkit-scrollbar {
-  background: #181a23;
-  width: 8px;
+  background: #0f172a; /* Darker, richer background */
+  width: 10px;
 }
 ::-webkit-scrollbar-thumb{
-  background: #232b35;
+  background: #334155; /* Slate-700ish */
   border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
 ::selection {
   background: #21282e;

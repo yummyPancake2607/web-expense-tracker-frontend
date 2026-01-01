@@ -843,6 +843,7 @@ tbody tr:hover {
 
   .main-content {
     padding: var(--spacing-xl);
+    padding-top: 80px; /* Clear fixed hamburger */
   }
 
   .stats-grid {
@@ -1324,4 +1325,62 @@ td:nth-child(4) {
 .export-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .logo{
+    margin-left: 40px;
+  }
+}
+
+/* ===== Play Money Wrapped Button ===== */
+.play-wrapped-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  z-index: 10;
+  transition: transform 0.2s;
+}
+
+.play-wrapped-btn:hover {
+  transform: scale(1.05);
+}
+
+/* ===== Responsiveness Fixes ===== */
+@media (max-width: 480px) {
+  /* Fix 1: Main Content Padding for Fixed Hamburger */
+  .main-content {
+      padding-top: 80px !important;
+  }
+  
+  /* Fix 1b: Page Title spacing */
+  .page-title {
+      margin-top: 10px;
+      text-align: center;
+  }
+
+  /* Fix 2: Play Money Wrapped Button Overlap */
+  /* Make the button static so it takes up space and pushes content down */
+  .play-wrapped-btn {
+      position: static;
+      margin: 0 auto 15px auto; /* Center and add margin below */
+      width: fit-content;
+  }
+  
+  .greeting-card {
+      display: flex;
+      flex-direction: column;
+      padding-top: var(--spacing-lg); /* Reset or adjust padding if needed */
+  }
 }

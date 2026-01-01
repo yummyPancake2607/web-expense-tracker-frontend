@@ -72,6 +72,15 @@ const WrappedContainer = ({ onClose }) => {
         return () => clearTimeout(timer);
     }, [step, data]);
 
+
+    // Lock Body Scroll
+    useEffect(() => {
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, []);
+
     const handleReplay = () => {
         setStep(0);
     };

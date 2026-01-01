@@ -10,10 +10,6 @@
   import AuroraBackground from "./AuroraBackground";
 
   import {
-    FaGithub,
-    FaInstagram,
-    FaLinkedin,
-    FaPinterest,
     FaBars,
     FaTimes,
   } from "react-icons/fa";
@@ -21,13 +17,17 @@
   import Dashboard from "./Dashboard";
 
   // ---------------- FEATURES LIST ----------------
+  // ---------------- FEATURES LIST ----------------
   const features = [
-    { icon: "📅", title: "Effortless Expense Logging", description: "Log purchases quickly with date, category, amount and notes." },
-    { icon: "📊", title: "Instant Visual Reports", description: "Pie and bar charts reveal trends by category and monthly spending." },
+    { icon: "🎁", title: "Money Wrapped", description: "Visualizing your financial year in stories." },
+    { icon: "💡", title: "Smart Insights", description: "AI-driven analysis of your spending habits." },
+    { icon: "📤", title: "Easy Exports", description: "Download your data in CSV format anytime." },
+    { icon: "📅", title: "Effortless Logging", description: "Log purchases quickly with date, category, and notes." },
+    { icon: "📊", title: "Instant Visual Reports", description: "Pie and bar charts reveal trends by category." },
     { icon: "🎯", title: "Set Budgets & Alerts", description: "Create category goals. Get alerted before overspending." },
+    { icon: "🔔", title: "Daily Reminders", description: "Stay on track with gentle browser notifications." },
+    { icon: "⚡", title: "Lightning Search", description: "Find any expense instantly by keyword or date." },
     { icon: "🔒", title: "Private. Secure. Yours.", description: "No ads. No selling your data. Info is stored securely." },
-    { icon: "⚡", title: "Lightning Search", description: "Find any expense instantly by keyword, category, or date." },
-    { icon: "💻", title: "Open Source", description: "Fork or self-host. Clean API & schema for builders." },
   ];
 
   const sectionFadeIn = {
@@ -88,17 +88,17 @@ function BackgroundBlobs() {
             {/* Logo */}
             <div className="logo logo-animated">
               <span className="logo-sparkle">💸</span>
-              <span className="logo-text logo-gradient">Expense Tracker</span>
+              <span className="logo-text logo-gradient">Coinzo</span>
             </div>
 
             {/* Desktop Menu */}
             <div className="navbar-right desktop-menu">
               <a href="#about" className="nav-link-underline">About</a>
               <a href="#features" className="nav-link-underline">Features</a>
-              <SignInButton mode="modal">
+              <SignInButton mode="modal" afterSignInUrl="/" afterSignUpUrl="/">
                 <button className="nav-btn nav-signin">Sign In</button>
               </SignInButton>
-              <SignUpButton mode="modal">
+              <SignUpButton mode="modal" afterSignInUrl="/" afterSignUpUrl="/">
                 <button className="nav-btn nav-signup">Sign Up</button>
               </SignUpButton>
             </div>
@@ -245,12 +245,6 @@ function BackgroundBlobs() {
             <li>🖥️ Built by devs for everyone</li>
             <li>♥ Zero ads, Zero clutter</li>
           </ul>
-          <div className="about-social">
-            <a href="https://github.com/yummyPancake2607"><FaGithub /></a>
-            <a href="https://www.instagram.com/lakshit_verma_10/"><FaInstagram /></a>
-            <a href="https://www.linkedin.com/in/lakshit-verma-933a56379/"><FaLinkedin /></a>
-            <a href="https://in.pinterest.com/lvcooking/"><FaPinterest /></a>
-          </div>
         </motion.div>
       </section>
     );
@@ -261,44 +255,76 @@ function BackgroundBlobs() {
     return (
       <footer className="footer glass-footer">
         <div className="footer-inner">
-          <div className="footer-social-row">
-            <a href="https://github.com/yummyPancake2607"><FaGithub /></a>
-            <a href="https://www.instagram.com/lakshit_verma_10/"><FaInstagram /></a>
-            <a href="https://www.linkedin.com/in/lakshit-verma-933a56379/"><FaLinkedin /></a>
-            <a href="https://in.pinterest.com/lvcooking/"><FaPinterest /></a>
-          </div>
           <div className="footer-link-row">
             <span>© {new Date().getFullYear()} Expense Tracker. All rights reserved.</span>
           </div>
           <div className="footer-credit">
-            <span>Made by <strong>Lakshit Verma</strong></span>
+            <span>Made by <strong>Lakshit Verma</strong> & <strong>Satvik Rastogi</strong></span>
           </div>
         </div>
       </footer>
     );
   }
 
+  // ---------------- NOT FOUND PAGE ----------------
+  function NotFound() {
+    return (
+      <div style={{ 
+        height: "100vh", display: "flex", flexDirection: "column", 
+        alignItems: "center", justifyContent: "center", color: "#1a1f36",
+        background: "linear-gradient(135deg, #f0f4f9 0%, #e0f2fe 100%)" 
+      }}>
+        <h1 style={{ fontSize: "4rem", marginBottom: "20px" }}>404</h1>
+        <p style={{ fontSize: "1.5rem", marginBottom: "40px" }}>Page Not Found</p>
+        <a href="/" style={{ 
+          padding: "12px 24px", background: "#4f46e5", color: "white", 
+          textDecoration: "none", borderRadius: "8px", fontWeight: "bold" 
+        }}>
+          Go Home
+        </a>
+      </div>
+    );
+  }
+
+  // ---------------- REDIRECT HELPER ----------------
+  // Clears hash/query params on mount (used after sign in)
+  function RedirectToRoot() {
+    React.useEffect(() => {
+        // If we have a hash (like #features) or query params, clear them
+        if (window.location.hash || window.location.search) {
+             window.history.replaceState(null, "", "/");
+        }
+    }, []);
+    return null;
+  }
+
   // ---------------- APP ROOT ----------------
   function App() {
+    // Simple 404 check: if path is not "/" and not empty
+    const path = window.location.pathname;
+    if (path !== "/" && path !== "/index.html") {
+        return <NotFound />;
+    }
+
     return (
       <>
         <SignedOut>
-    <div className="homepage-shell">
-      <BackgroundBlobs />
-      <Navbar />
+          <div className="homepage-shell">
+            <BackgroundBlobs />
+            <Navbar />
 
-      <main className="homepage-body">
-        <HeroSection />
-        <Features />
-        <About />
-      </main>
+            <main className="homepage-body">
+              <HeroSection />
+              <Features />
+              <About />
+            </main>
 
-      <Footer />
-    </div>
-  </SignedOut>
-
+            <Footer />
+          </div>
+        </SignedOut>
 
         <SignedIn>
+          <RedirectToRoot />
           <Dashboard />
         </SignedIn>
       </>

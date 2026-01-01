@@ -57,6 +57,8 @@ function Dashboard() {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [exportLoading, setExportLoading] = useState(false);
+  const [reminderEnabled, setReminderEnabled] = useState(false);
+  const [reminderTime, setReminderTime] = useState("20:00");
 
 
   // 🌟 Sidebar toggle for small screens
@@ -298,6 +300,68 @@ const handleEditBudget = (b) => {
     fetchBudgets();
   }
 
+  // --- Reminder Handler ---
+  const handleSaveReminder = async () => {
+      // 1. Ask for permission first
+      if (reminderEnabled && Notification.permission !== "granted") {
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") {
+            alert("We need permission to show notifications!");
+            return;
+        }
+      }
+
+      const token = await getToken();
+      try {
+          const res = await fetch(`${API_URL}/user/preferences`, {
+              method: "PUT",
+              headers: { 
+                  "Content-Type": "application/json",
+                  "Authorization": "Bearer " + token 
+              },
+              body: JSON.stringify({ 
+                  reminder_enabled: reminderEnabled,
+                  reminder_time: reminderTime
+              }),
+          });
+          if (res.ok) {
+              alert("Reminder preferences saved! 🔔");
+          } else {
+              alert("Failed to save preferences.");
+          }
+      } catch (e) {
+          console.error("Error saving reminder prefs", e);
+      }
+  };
+
+  // 🔔 Browser Notification Logic
+  useEffect(() => {
+    if (!reminderEnabled || !isSignedIn) return;
+
+    const interval = setInterval(() => {
+        const now = new Date();
+        const currentHours = String(now.getHours()).padStart(2, '0');
+        const currentMinutes = String(now.getMinutes()).padStart(2, '0');
+        const currentTime = `${currentHours}:${currentMinutes}`;
+
+        if (currentTime === reminderTime) {
+            // Check if we already notified this minute to avoid spam (simple lock)
+            const lastRun = localStorage.getItem("last_reminder_run");
+            if (lastRun !== currentTime) {
+                 if (Notification.permission === "granted") {
+                     new Notification("📝 Time to log your expenses!", {
+                         body: "Quick check-in: Did you spend anything today?",
+                         icon: "/logo.svg" // optional, assumes public/logo.svg exists
+                     });
+                 }
+                 localStorage.setItem("last_reminder_run", currentTime);
+            }
+        }
+    }, 10000); // Check every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [reminderEnabled, reminderTime, isSignedIn]);
+
   // --- Chart Data ---
   const PALETTE = [
     "#60a5fa", "#a78bfa", "#34d399", "#f59e0b",
@@ -376,7 +440,7 @@ const handleEditBudget = (b) => {
 
       {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-        <h2 className="logo">💸 Expense</h2>
+        <h2 className="logo">💸 Coinzo</h2>
         <nav>
           {navItems.map((item) => (
             <button key={item.name} className={`sidebar-link ${view === item.name ? "active" : ""}`} onClick={() => setView(item.name)}>
@@ -409,14 +473,7 @@ const handleEditBudget = (b) => {
             <div className="greeting-card" style={{ position: 'relative' }}>
               <button 
                 onClick={() => setShowWrapped(true)}
-                style={{ 
-                    position: 'absolute', top: '20px', right: '20px', 
-                    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', 
-                    color: 'white', border: 'none', padding: '8px 15px', 
-                    borderRadius: '20px', cursor: 'pointer', fontWeight: 'bold',
-                    display: 'flex', alignItems: 'center', gap: '5px',
-                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                }}
+                className="play-wrapped-btn"
               >
                   <FaPlay size={12} /> Play Money Wrapped
               </button>
@@ -709,6 +766,46 @@ const handleEditBudget = (b) => {
                     <span className="currency-badge">{currency}</span>
                   </p>
                 </div>
+                
+                {/* Daily Reminder Setting */}
+                <div className="reminder-box" style={{ marginTop: '20px', padding: '15px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px' }}>
+                    <h3 style={{ marginTop: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>⏰ Daily Reminder</h3>
+                    <p style={{ fontSize: '0.9rem', opacity: 0.8, marginBottom: '15px' }}>Get a browser notification to log your expenses.</p>
+                    
+                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                            <input 
+                                type="checkbox" 
+                                checked={reminderEnabled} 
+                                onChange={(e) => setReminderEnabled(e.target.checked)}
+                                style={{ transform: 'scale(1.2)' }}
+                            />
+                            <span>Enable Reminders</span>
+                        </label>
+                        
+                        {reminderEnabled && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span>At:</span>
+                                <input 
+                                    type="time" 
+                                    value={reminderTime} 
+                                    onChange={(e) => setReminderTime(e.target.value)}
+                                    style={{ padding: '5px', borderRadius: '5px', border: '1px solid #444', background: '#222', color: '#fff' }}
+                                />
+                            </div>
+                        )}
+                        
+                        <button 
+                            onClick={handleSaveReminder}
+                            style={{ 
+                                padding: '6px 16px', borderRadius: '6px', border: 'none', 
+                                background: 'var(--primary)', color: 'white', cursor: 'pointer', fontWeight: 'bold' 
+                            }}
+                        >
+                            Save
+                        </button>
+                    </div>
+                </div>
 
                 {/* Actions */}
                 <div className="profile-actions">
@@ -718,8 +815,8 @@ const handleEditBudget = (b) => {
                   >
                      Sign Out
                   </button>
-                  <div style={{ marginLeft: "10px" }}>
-                    <UserButton afterSignOutUrl="/" />
+                  <div style={{ marginLeft: "10px", marginTop: "20px" }}>
+                    <UserButton afterSignOutUrl="/" /> Manage Account
                   </div>
                 </div>
               </SignedIn>
